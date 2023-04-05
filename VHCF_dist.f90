@@ -1,20 +1,16 @@
 Program dist
 Implicit None
-  Integer, Parameter                   :: natoms =108,nframes =80000
+  Integer, Parameter                   :: natoms =108,nframes =1000
   Real*8, Parameter                    :: Lx=15.2565, Ly=15.2565, Lz=15.2565
   Real*8, allocatable                  :: xA(:,:), yA(:,:), zA(:,:)
   Real*8, allocatable                  :: xB(:,:), yB(:,:), zB(:,:)
   Character*4                          :: dum1,dum2
 Integer, Parameter                     :: nmolAg = 54, nmolI = 54
-Integer                                :: maxbinr, moltotal, nbinAA, nbinBB, nbinAB
+Integer                                :: maxbinr, moltotal, nbinAA
 Real*8                                 :: pi, delr, drAA, rAA, dxAA, dyAA, dzAA
-Real*8                                 :: drBB, rBB, dxBB, dyBB, dzBB
-Real*8                                 :: drAB, rAB, dxAB, dyAB, dzAB
 Integer                                :: i, k, ii, kk, jj, ll, binr, bint, delt
 Real*8                                 :: numdensity, ntotalr, ru, rl, r, C, rho
 Real*8, Allocatable, Dimension (:,:)     :: histrAA, GrAA
-Real*8, Allocatable, Dimension (:,:)     :: histrBB, GrBB
-Real*8, Allocatable, Dimension (:,:)     :: histrAB, GrAB
 Integer, Dimension (21)                 :: t_lag, countA
 
 pi = 3.1415926536D0
@@ -29,15 +25,13 @@ allocate (xA(nframes,nmolAg)); allocate (yA(nframes,nmolAg)); allocate (zA(nfram
 allocate (xB(nframes,nmolI)); allocate (yB(nframes,nmolI)); allocate (zB(nframes,nmolI))
 
 allocate (histrAA (maxbinr,21)); allocate (GrAA (maxbinr,21))
-allocate (histrBB (maxbinr,21)); allocate (GrBB (maxbinr,21))
-allocate (histrAB (maxbinr,21)); allocate (GrAB (maxbinr,21))
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 Open(50,file = 'VHCF-dist_Ag.dat')
 
 !----------------read coordinates--------------------------------------
 
-Open(10,file = '../../AgI-MD-pos-750K.xyz')
+Open(10,file = 'AgI-MD-pos-750K.xyz')
 
 xA(:,:)=0.0; yA(:,:)=0.0; zA(:,:)=0.0
 xB(:,:)=0.0; yB(:,:)=0.0; zB(:,:)=0.0
@@ -58,8 +52,7 @@ close(10)
 
 Write(*,*) "coordinates Read"
 
-!-------------------calculate distances (r)-----------------
-histrAA(:,:) = 0; histrBB(:,:) = 0; histrAB(:,:) = 0
+histrAA(:,:) = 0
 countA(:) = 0
 
 t_lag=(/0.,500.,1000.,1500.,2000.,2500.,3000.,3500.,4000.,4500.,5000.,5500.,6000.,6500.,7000.,7500.,&
@@ -105,11 +98,6 @@ Do i = 1, 21
 	GrAA (binr,i) = nmolAg*(real (histrAA (binr,i)) / (real (countA(i)*C))) / rho
         Write (i*100, *) r, GrAA (binr,i)
 END Do
-
-!Write (50, *) r, GrAA (binr,1), GrAA (binr,2), GrAA (binr,3), GrAA (binr,4), GrAA (binr,5), GrAA (binr,6),  &
-!               & GrAA (binr,7), GrAA (binr,8), GrAA (binr,9), GrAA (binr,10), GrAA (binr,11), GrAA (binr,12), &
-!               & GrAA (binr,13), GrAA (binr,14), GrAA (binr,15), GrAA (binr,16), GrAA (binr,17), GrAA (binr,18), &
-!               & GrAA (binr,19), GrAA (binr,20), GrAA (binr,21)
 
 End Do
 End
