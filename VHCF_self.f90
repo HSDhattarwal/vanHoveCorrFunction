@@ -1,20 +1,16 @@
 Program dist
 Implicit None
-  Integer, Parameter                   :: natoms =108,nframes =80000
+  Integer, Parameter                   :: natoms =108,nframes =1000
   Real*8, Parameter                    :: Lx=15.2565, Ly=15.2565, Lz=15.2565
   Real*8, allocatable                  :: xA(:,:), yA(:,:), zA(:,:)
   Real*8, allocatable                  :: xB(:,:), yB(:,:), zB(:,:)
   Character*4                          :: dum1,dum2
 Integer, Parameter                     :: nmolAg = 54, nmolI = 54
-Integer                                :: maxbinr, moltotal, nbinAA, nbinBB, nbinAB
+Integer                                :: maxbinr, moltotal, nbinAA
 Real*8                                 :: pi, delr, drAA, rAA, dxAA, dyAA, dzAA
-Real*8                                 :: drBB, rBB, dxBB, dyBB, dzBB
-Real*8                                 :: drAB, rAB, dxAB, dyAB, dzAB
 Integer                                :: i, k, ii, kk, jj, binr, bint, delt
 Real*8                                 :: numdensity, ntotalr, ru, rl, r, C
 Real*8, Allocatable, Dimension (:,:)     :: histrAA, GrAA
-Real*8, Allocatable, Dimension (:,:)     :: histrBB, GrBB
-Real*8, Allocatable, Dimension (:,:)     :: histrAB, GrAB
 Integer, Dimension (6)                 :: t_lag, countA
 
 pi = 3.1415926536D0
@@ -27,8 +23,6 @@ allocate (xA(nframes,nmolAg)); allocate (yA(nframes,nmolAg)); allocate (zA(nfram
 allocate (xB(nframes,nmolI)); allocate (yB(nframes,nmolI)); allocate (zB(nframes,nmolI))
 
 allocate (histrAA (maxbinr,6)); allocate (GrAA (maxbinr,6))
-allocate (histrBB (maxbinr,6)); allocate (GrBB (maxbinr,6))
-allocate (histrAB (maxbinr,6)); allocate (GrAB (maxbinr,6))
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 Open(50,file = 'VHCF-self_Ag.dat')
@@ -56,8 +50,7 @@ close(10)
 
 Write(*,*) "coordinates Read"
 
-!-------------------calculate distances (r)-----------------
-histrAA(:,:) = 0; histrBB(:,:) = 0; histrAB(:,:) = 0
+histrAA(:,:) = 0
 countA(:) = 0
 
 t_lag = (/100, 250, 500, 1000, 2000, 4000 /)
